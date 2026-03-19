@@ -1,4 +1,4 @@
-name: Update PharmaGO
+name: Update PharmaGO Dashboard
 
 on:
   repository_dispatch:
@@ -7,10 +7,12 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Crucial for pushing changes back to README
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Save event payload
         run: |
@@ -24,10 +26,10 @@ jobs:
       - name: Run update script
         run: python scripts/update_dashboard.py
 
-      - name: Commit changes
+      - name: Commit and Push changes
         run: |
           git config user.name "pharmago-bot"
           git config user.email "bot@pharmago.com"
           git add .
-          git commit -m "Update dashboard [auto]" || echo "No changes"
+          git commit -m "Update dashboard: ${{ github.event.client_payload.repo }} [auto]" || echo "No changes"
           git push
