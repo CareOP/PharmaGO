@@ -1,4 +1,4 @@
-name: Update PharmaGO Dashboard
+name: Update PharmaGO
 
 on:
   repository_dispatch:
