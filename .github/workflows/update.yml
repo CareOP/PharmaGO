@@ -1,0 +1,33 @@
+name: Update PharmaGO Dashboard
+
+on:
+  repository_dispatch:
+    types: [repo_push]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Save event payload
+        run: |
+          echo '${{ toJson(github.event.client_payload) }}' > event.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run update script
+        run: python scripts/update_dashboard.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "pharmago-bot"
+          git config user.email "bot@pharmago.com"
+          git add .
+          git commit -m "Update dashboard [auto]" || echo "No changes"
+          git push
